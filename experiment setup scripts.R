@@ -10,6 +10,7 @@ experiment_plan <- data.frame(
   Block = rep(randomized_people, each = length(treatment_conditions) * 5),
   Treatment = rep(rep(treatment_conditions, each = 5), times = length(people_blocks))
 )
+head(experiment_plan, 151)
 
 experiment_plan_v2 <- data.frame(
   Block = rep(randomized_people, each = length(treatment_conditions) * 5),
