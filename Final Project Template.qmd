@@ -67,6 +67,10 @@ knitr::opts_chunk$set(error =  FALSE)
 -   **Challenges/Adjustments**: Mention any difficulties or changes made during data collection (e.g., technical issues, time adjustments).
 -   **Data Presentation**: Display the collected data in tables or graphs, summarizing key measures like mean and standard deviation..
 
+Randomized Complete Block Design
+
+Each person is a block, where they do 5 reaction tests for each treatment level (iPad, iPhone, Macbook Trackpad). Each experimental unit is an individual single reaction speed test.
+
 # Analysis
 
 -   **Exploratory Data**: Start with basic statistics (mean, SD) and visualizations (e.g., boxplots) to understand the data.
