@@ -1,0 +1,95 @@
+---
+title: 'Final Project'
+subtitle: "PSTAT122: Design and Analysis of Experiments" 
+
+author:
+  - name: "Fall 2025"
+   # affiliations:
+    #  - name: "Fall 2025"
+affiliation-title: "Quarter"
+format: 
+ pdf:
+    code-fold: true
+    code-line-numbers: true
+    code-copy: true
+    code-tools: true
+    self-contained: true
+    toc: false
+    toc-location: left
+    number-sections: true
+    geometry: margin=0.2in
+
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message =  FALSE)
+knitr::opts_chunk$set(warning =  FALSE)
+knitr::opts_chunk$set(error =  FALSE)
+
+```
+
+
+
+:::callout
+<div style="text-align: center">
+<span style="color: blue;"> **STUDENT NAME **</span> 
+</div>
+- STUDENT 1    (NetID 1)
+- STUDENT 2    (NetID 2)
+- STUDENT 3    (NetID 3)
+- STUDENT 4    (NetID 4)
+:::
+
+
+::: {.callout-caution}
+# Due Date
+**Due Date:** Monday, December 8, 2025, 11:59 PM
+:::
+
+
+# Introduction
+-	Clear statement of the objective or research question.
+-	Brief context or motivation.
+
+# Experimental Design
+- Description of factors and treatment structure.
+- Clearly state what you are measuring and the units.
+Examples: Number of words recalled (count), reaction time (seconds), taste rating (1–5 scale).
+- Identify which factors are fixed vs. random.
+- Description of design type (CRD, RCBD, factorial, etc.).
+- Explain how randomization, replication, and (if used) blocking were implemented.
+- Sample size: Provide number of observations per condition.
+Guideline: 5–10 per treatment for CRD, 3–5 blocks for RCBD, total feasible within 1 hour.
+
+(You are encouraged to explore more resources for determining the sample size )
+
+
+
+# Data Collection
+- **Procedure**: Describe how and when the experiment was conducted (e.g., location, date, steps taken).
+- **Challenges/Adjustments**: Mention any difficulties or changes made during data collection (e.g., technical issues, time adjustments).
+- **Data Presentation**: Display the collected data in tables or graphs, summarizing key measures like mean and standard deviation..
+
+# Analysis
+
+- **Exploratory Data**: Start with basic statistics (mean, SD) and visualizations (e.g., boxplots) to understand the data.
+
+
+- **Hypothesis Testing**: Test your hypothesis with an appropriate statistical test (e.g., ANOVA).
+
+- **Tables, Figures, & Code**: Include key results (ANOVA table, post-test) and relevant `R` code excerpts where needed.
+
+-	Use `R` to analyze the data.
+
+# Conclusions
+-	Summarize key findings.
+- Comment on limitations and possible improvements.
+
+
+# References
+ (If needed.)
+
+# Appendices
+ 
+ - `R` code.
+
+
