@@ -33,7 +33,7 @@ knitr::opts_chunk$set(error =  FALSE)
 :::
 
 -   Luke Drushell (drushell)
--   STUDENT 2 (NetID 2)
+-   Anna Gornyitzki (annagornyitzki)
 -   STUDENT 3 (NetID 3)
 -   STUDENT 4 (NetID 4)
 -   STUDENT 5 (NetID 5)
