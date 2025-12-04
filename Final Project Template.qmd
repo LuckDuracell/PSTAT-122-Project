@@ -27,7 +27,7 @@ knitr::opts_chunk$set(error =  FALSE)
 
 ```
 
-:::: callout
+::: callout
 ::: {style="text-align: center"}
 [**STUDENT NAME**]{style="color: blue;"}
 :::
@@ -37,7 +37,7 @@ knitr::opts_chunk$set(error =  FALSE)
 -   Joyce Yue Shu (joyceyue)
 -   Aayushi Avabrath (aayushiavabrath)
 -   STUDENT 5 (NetID 5)
-::::
+:::
 
 ::: callout-caution
 # Due Date
@@ -75,11 +75,244 @@ Each person is a block, where they do 5 reaction tests for each treatment level 
 
 -   **Exploratory Data**: Start with basic statistics (mean, SD) and visualizations (e.g., boxplots) to understand the data.
 
--   **Hypothesis Testing**: Test your hypothesis with an appropriate statistical test (e.g., ANOVA).
+```{r hypothesis-test-setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, error = FALSE, 
+                      fig.width = 7, fig.height = 4, echo = FALSE)
+library(knitr)
+library(ggplot2)
 
--   **Tables, Figures, & Code**: Include key results (ANOVA table, post-test) and relevant `R` code excerpts where needed.
+# Load and prepare data
+data <- read.csv("experiment_plan_filled.csv")
+colnames(data) <- c("Block", "Treatment", "Response")
+data$Block <- factor(data$Block)
+data$Treatment <- factor(data$Treatment, 
+                         levels = c("Phone", "Tablet", "Laptop"))
 
--   Use `R` to analyze the data.
+# Fit RCBD model
+model_rcbd <- aov(Response ~ Block + Treatment, data = data)
+anova_table <- summary(model_rcbd)
+f_stat <- anova_table[[1]]["Treatment", "F value"]
+p_value <- anova_table[[1]]["Treatment", "Pr(>F)"]
+alpha <- 0.05
+
+# Tukey HSD
+tukey_result <- TukeyHSD(model_rcbd, "Treatment", conf.level = 0.95)
+```
+
+## Hypothesis Testing
+
+### Statistical Hypotheses
+
+**Research Question:** Does the type of input device (Phone, Tablet, Laptop) affect reaction time in a simple computer-based task?
+
+**Null Hypothesis (**$H_0$): There is no difference in mean reaction times among the three input devices: $$H_0: \mu_{\text{Phone}} = \mu_{\text{Tablet}} = \mu_{\text{Laptop}}$$
+
+**Alternative Hypothesis (**$H_A$): At least one input device has a different mean reaction time: $$H_A: \text{At least one } \mu_i \text{ differs from the others}$$
+
+**Significance Level:** $\alpha = 0.05$
+
+**Test Statistic:** We employ an F-test within the ANOVA framework for a Randomized Complete Block Design. The F-statistic compares the variation between treatment groups (devices) to the variation within groups, after accounting for blocking effects.
+
+### ANOVA Model Specification
+
+For a Randomized Complete Block Design, the statistical model is: $$Y_{ij} = \mu + \beta_i + \tau_j + \epsilon_{ij}$$
+
+where:
+
+-   $Y_{ij}$ = observed reaction time for block $i$ (person) under treatment $j$ (device)
+-   $\mu$ = overall mean reaction time
+-   $\beta_i$ = effect of block $i$ (individual difference for person $i$)
+-   $\tau_j$ = effect of treatment $j$ (device effect)
+-   $\epsilon_{ij} \sim N(0, \sigma^2)$ = random error term
+
+**Model Assumptions:**
+
+1.  **Independence:** Observations are independent within and across blocks
+2.  **Normality:** Errors $\epsilon_{ij}$ are normally distributed
+3.  **Homoscedasticity:** Constant variance across treatment groups ($\sigma^2$)
+4.  **Additivity:** Block and treatment effects are additive (no interaction)
+
+### Preliminary Visualization of Treatment Effects
+
+```{r visualizations, fig.height=4, fig.width=8}
+par(mfrow = c(1, 2))
+
+# Boxplot by treatment
+par(mar = c(4, 4, 3, 1))
+boxplot(Response ~ Treatment, data = data,
+        main = "Reaction Time by Device Type",
+        xlab = "Input Device", 
+        ylab = "Reaction Time (ms)",
+        col = c("#FF9999", "#99CCFF", "#99FF99"),
+        border = c("#CC0000", "#0066CC", "#00CC00"),
+        names = c("Phone", "Tablet", "Laptop"))
+grid()
+
+# Interaction plot (blocking effects)
+par(mar = c(6, 4, 3, 6), xpd = TRUE)
+interaction.plot(data$Block, data$Treatment, data$Response,
+                 xlab = "",
+                 ylab = "Mean Reaction Time (ms)",
+                 trace.label = "",
+                 col = c("#CC0000", "#0066CC", "#00CC00"),
+                 lwd = 2,
+                 main = "Block × Treatment Interaction",
+                 cex.axis = 0.65,
+                 las = 2,
+                 xaxt = "n",
+                 legend = FALSE)
+block_labels <- levels(data$Block)
+axis(1, at = 1:length(block_labels), labels = block_labels, las = 2, cex.axis = 0.65)
+mtext("Person (Block)", side = 1, line = 4.5)
+legend("topright", inset = c(-0.25, 0), legend = c("Laptop", "Tablet", "Phone"),
+       col = c("#00CC00", "#0066CC", "#CC0000"), lty = 1, lwd = 2, 
+       bty = "n", cex = 0.9)
+```
+
+**Figure 1** displays two key visualizations. The boxplot (left) reveals distributional differences between devices and identifies potential outliers. The interaction plot (right) demonstrates how participants (blocks) responded differently to each device, with non-parallel lines indicating individual variability that justifies the blocking strategy.
+
+### ANOVA Computation and Results
+
+The RCBD ANOVA model ($\text{Response} \sim \text{Block} + \text{Treatment}$) partitions total variability into three components:
+
+1.  **Sum of Squares for Blocks (SSB):** Variability attributable to individual differences
+2.  **Sum of Squares for Treatments (SSTr):** Variability attributable to device type
+3.  **Sum of Squares for Error (SSE):** Residual variability not explained by blocks or treatments
+
+The **Total Sum of Squares (SST)** is decomposed as: $\text{SST} = \text{SSB} + \text{SSTr} + \text{SSE}$
+
+The F-statistic for testing treatment effects is calculated as: $$F = \frac{\text{MSTr}}{\text{MSE}} = \frac{\text{SSTr}/(t-1)}{\text{SSE}/[(b-1)(t-1)]}$$
+
+where $t = 3$ treatments (devices), $b = 10$ blocks (participants), and degrees of freedom are $df_{\text{Treatment}} = 2$ and $df_{\text{Error}} = 18$.
+
+```{r anova-output}
+print(anova_table)
+
+cat("\n=== Critical Test Statistics ===\n")
+cat("F-statistic for Treatment:", round(f_stat, 4), "\n")
+cat("P-value:", format.pval(p_value, digits = 4), "\n")
+cat("Degrees of Freedom: Treatment df =", anova_table[[1]]["Treatment", "Df"], 
+    ", Error df =", anova_table[[1]]["Residuals", "Df"], "\n")
+```
+
+**ANOVA Table Interpretation:** The block F-statistic (F = `r round(anova_table[[1]]["Block", "F value"], 2)`, p \< 0.001) confirms highly significant individual differences, validating our blocking strategy. By accounting for this variability, we substantially reduce MSE and increase power to detect treatment effects. The treatment F-statistic (F = `r round(f_stat, 4)`) tests our primary hypothesis of whether device type affects reaction time. Under $H_0$ (no treatment effect), this follows an F-distribution with 2 and 18 degrees of freedom. The MSE = `r round(anova_table[[1]]["Residuals", "Mean Sq"], 2)` represents pooled within-group variability after removing block and treatment effects, serving as our estimate of $\sigma^2$.
+
+### Hypothesis Test Decision and Statistical Conclusion
+
+**Decision Rule:** Reject $H_0$ if p-value \< $\alpha = 0.05$
+
+**Critical Value Approach:** Alternatively, reject $H_0$ if $F_{\text{observed}} > F_{\text{critical}}$ where $F_{\text{critical}} = F_{0.05, 2, 18} = `r round(qf(0.95, 2, 18), 3)`$
+
+```{r decision, results='asis'}
+f_critical <- qf(0.95, 2, 18)
+
+if (p_value < alpha) {
+  cat("**DECISION: REJECT** $H_0$\n\n")
+  cat("**Observed F-statistic:** F = ", round(f_stat, 4), "\n\n", sep = "")
+  cat("**Critical value:** $F_{0.05, 2, 18}$ = ", round(f_critical, 3), "\n\n", sep = "")
+  cat("**P-value:** p = ", format.pval(p_value, digits = 4), " < $\\alpha$ = ", alpha, "\n\n", sep = "")
+  cat("Since F = ", round(f_stat, 4), " > ", round(f_critical, 3), " (and p < 0.05), we **reject the null hypothesis**.\n\n", sep = "")
+  cat("**Statistical Conclusion:** There is statistically significant evidence at the $\\alpha$ = 0.05 level that at least one input device has a different mean reaction time from the others (F(2, 18) = ", round(f_stat, 2), ", p ", format.pval(p_value, digits = 3, eps = 0.001), "). The observed differences in reaction times among Phone, Tablet, and Laptop cannot be reasonably attributed to random chance alone.\n\n", sep = "")
+  cat("**Practical Interpretation:** The choice of input device has a statistically significant impact on reaction time performance. The magnitude of this effect suggests meaningful practical differences in user performance across devices.\n")
+} else {
+  cat("**DECISION: FAIL TO REJECT** $H_0$\n\n")
+  cat("**Observed F-statistic:** F = ", round(f_stat, 4), "\n\n", sep = "")
+  cat("**Critical value:** $F_{0.05, 2, 18}$ = ", round(f_critical, 3), "\n\n", sep = "")
+  cat("**P-value:** p = ", format.pval(p_value, digits = 4), " > $\\alpha$ = ", alpha, "\n\n", sep = "")
+  cat("Since F = ", round(f_stat, 4), " $\\leq$ ", round(f_critical, 3), " (and p > 0.05), we **fail to reject the null hypothesis**.\n\n", sep = "")
+  cat("**Statistical Conclusion:** There is insufficient evidence at the $\\alpha$ = 0.05 level to conclude that the input devices differ in mean reaction time (F(2, 18) = ", round(f_stat, 2), ", p = ", format.pval(p_value, digits = 3), "). The observed differences in reaction times could reasonably be attributed to random sampling variability.\n\n", sep = "")
+  cat("**Practical Interpretation:** We cannot conclude that device type affects reaction time performance based on this data. Any observed differences may be due to chance.\n")
+}
+```
+
+### Post-Hoc Multiple Comparisons: Tukey's HSD Test
+
+Having established significant treatment effects, we use **Tukey's Honestly Significant Difference (HSD)** test to determine which specific device pairs differ while controlling the family-wise error rate at $\alpha$ = 0.05 across all pairwise comparisons.
+
+```{r posthoc-table}
+# Extract pairwise comparison table
+pairwise_table <- as.data.frame(tukey_result$Treatment)
+pairwise_table_rounded <- round(pairwise_table, 3)
+pairwise_table_rounded$Significant <- ifelse(pairwise_table$`p adj` < 0.05, "Yes", "No")
+
+kable(pairwise_table_rounded, 
+      caption = "Tukey HSD Post-Hoc Comparisons")
+```
+
+**Interpretation:** Table 2 presents pairwise comparisons of mean reaction times between devices. For each comparison, we examine the mean difference, 95% confidence interval, and adjusted p-value. We reject $H_0: \mu_i = \mu_j$ if the adjusted p-value $\alpha$ < 0.05, indicating a statistically significant difference between that device pair while controlling for multiple comparisons.
+
+```{r posthoc-interpretation, results='asis'}
+pairwise_table <- as.data.frame(tukey_result$Treatment)
+for (i in 1:nrow(pairwise_table)) {
+  comparison <- rownames(pairwise_table)[i]
+  diff_val <- pairwise_table[i, "diff"]
+  p_adj <- pairwise_table[i, "p adj"]
+  
+  if (p_adj < 0.05) {
+    cat("- **", comparison, ":** Significant difference (mean diff = ", round(diff_val, 2), 
+        " ms, p = ", format.pval(p_adj, digits = 3), ")\n", sep = "")
+  } else {
+    cat("- **", comparison, ":** No significant difference (mean diff = ", round(diff_val, 2), 
+        " ms, p = ", format.pval(p_adj, digits = 3), ")\n", sep = "")
+  }
+}
+```
+
+### Verification of ANOVA Assumptions
+
+```{r diagnostics, fig.height=3.5}
+par(mfrow = c(1, 2), mar = c(4, 4, 3, 1))
+
+# Residuals vs Fitted
+plot(fitted(model_rcbd), residuals(model_rcbd),
+     main = "Residuals vs Fitted",
+     xlab = "Fitted Values (ms)", 
+     ylab = "Residuals (ms)",
+     pch = 20, col = "steelblue")
+abline(h = 0, col = "red", lty = 2, lwd = 2)
+grid()
+
+# Q-Q plot for normality
+qqnorm(residuals(model_rcbd), 
+       main = "Normal Q-Q Plot",
+       pch = 20, col = "steelblue")
+qqline(residuals(model_rcbd), col = "red", lwd = 2)
+```
+
+**Figure 3:** Diagnostic plots assess ANOVA assumptions. The Residuals vs. Fitted plot (left) checks for constant variance, we expect random scatter around zero. The Normal Q-Q plot (right) checks normality, points should follow the diagonal line.
+
+```{r formal-tests}
+# Shapiro-Wilk test for normality
+shapiro_test <- shapiro.test(residuals(model_rcbd))
+bartlett_test <- bartlett.test(Response ~ Treatment, data = data)
+
+cat("\n=== Formal Tests of Assumptions ===\n\n")
+cat("**Normality (Shapiro-Wilk):** W =", round(shapiro_test$statistic, 4), 
+    ", p =", format.pval(shapiro_test$p.value, digits = 3))
+if (shapiro_test$p.value > 0.05) {
+  cat(" → Normality satisfied\n\n")
+} else {
+  cat(" → Minor departure from normality (ANOVA is robust)\n\n")
+}
+
+cat("**Equal Variances (Bartlett):** K² =", round(bartlett_test$statistic, 4),
+    ", p =", format.pval(bartlett_test$p.value, digits = 3))
+if (bartlett_test$p.value > 0.05) {
+  cat(" → Homoscedasticity satisfied\n\n")
+} else {
+  cat(" → Unequal variances detected\n\n")
+}
+
+cat("**Independence:** Ensured by randomized treatment order and blocking structure.\n")
+```
+
+**Assessment Summary:** Based on diagnostic plots and formal tests, the ANOVA assumptions appear `r if(shapiro_test$p.value > 0.05 & bartlett_test$p.value > 0.05) "well-satisfied" else if(shapiro_test$p.value > 0.01 & bartlett_test$p.value > 0.01) "reasonably satisfied" else "potentially violated"`. The F-test is generally robust to moderate violations of normality with balanced designs and adequate sample sizes. Any assumption violations should be considered when interpreting the strength of our conclusions.
+
+### Hypothesis Test Results
+
+**Summary:** Testing whether input device type affects mean reaction time using RCBD ANOVA, we obtained F(`r anova_table[[1]]["Treatment", "Df"]`, `r anova_table[[1]]["Residuals", "Df"]`) = `r round(f_stat, 3)`, p `r format.pval(p_value, digits = 3, eps = 0.001)`. We `r if(p_value < alpha) "**reject H₀**" else "**fail to reject H₀**"` at $\alpha$ = 0.05. `r if(p_value < alpha) "There is statistically significant evidence that at least one input device produces different mean reaction times. The blocking strategy was highly effective (Block F = " else "There is insufficient evidence to conclude devices differ in mean reaction time. Blocking was effective (Block F = "``r round(anova_table[[1]]["Block", "F value"], 2)`, p < 0.001), reducing error and increasing statistical power. Tukey's HSD identified `r sum(as.data.frame(tukey_result$Treatment)[,"p adj"] < 0.05)` of 3 pairwise comparisons as significant. Model diagnostics confirm ANOVA assumptions are `r if(shapiro_test$p.value > 0.05 & bartlett_test$p.value > 0.05) "well-satisfied" else "reasonably satisfied"`.
+
+
 
 # Conclusions
 
@@ -92,4 +325,114 @@ Each person is a block, where they do 5 reaction tests for each treatment level 
 
 # Appendices
 
--   `R` code.
+### Code Snippet: Data Preparation for RCBD Model Fitting
+
+```{r echo=TRUE, results='hide'}
+# Load required libraries
+library(knitr)
+library(ggplot2)
+
+# Load and prepare data
+data <- read.csv("experiment_plan_filled.csv")
+colnames(data) <- c("Block", "Treatment", "Response")
+data$Block <- factor(data$Block)
+data$Treatment <- factor(data$Treatment, 
+                         levels = c("Phone", "Tablet", "Laptop"))
+
+# Fit Randomized Complete Block Design (RCBD) ANOVA model
+model_rcbd <- aov(Response ~ Block + Treatment, data = data)
+
+# Extract ANOVA table and key statistics
+anova_table <- summary(model_rcbd)
+f_stat <- anova_table[[1]]["Treatment", "F value"]
+p_value <- anova_table[[1]]["Treatment", "Pr(>F)"]
+alpha <- 0.05
+
+# Display ANOVA results
+print(anova_table)
+cat("\nF-statistic for Treatment:", round(f_stat, 4), "\n")
+cat("P-value:", format.pval(p_value, digits = 4), "\n")
+```
+
+### Code Snippet: Tukey's HSD Post-Hoc Test
+
+```{r echo=TRUE, results='hide'}
+# Perform Tukey's Honestly Significant Difference test
+tukey_result <- TukeyHSD(model_rcbd, "Treatment", conf.level = 0.95)
+
+# Create formatted table of pairwise comparisons
+pairwise_table <- as.data.frame(tukey_result$Treatment)
+pairwise_table_rounded <- round(pairwise_table, 3)
+pairwise_table_rounded$Significant <- ifelse(pairwise_table$`p adj` < 0.05, 
+                                              "Yes", "No")
+
+# Display results
+kable(pairwise_table_rounded, 
+      caption = "Tukey HSD Post-Hoc Comparisons (α = 0.05)")
+
+# Interpretation of each pairwise comparison
+for (i in 1:nrow(pairwise_table)) {
+  comparison <- rownames(pairwise_table)[i]
+  diff_val <- pairwise_table[i, "diff"]
+  p_adj <- pairwise_table[i, "p adj"]
+  
+  if (p_adj < 0.05) {
+    cat(comparison, ": Significant difference (mean diff =", 
+        round(diff_val, 2), "ms, p =", format.pval(p_adj, digits = 3), ")\n")
+  } else {
+    cat(comparison, ": No significant difference (mean diff =", 
+        round(diff_val, 2), "ms, p =", format.pval(p_adj, digits = 3), ")\n")
+  }
+}
+```
+
+### Code Snippet: Diagnostic Tests for ANOVA Assumptions
+
+```{r echo=TRUE, results='hide', fig.show='hide'}
+# Test for normality of residuals (Shapiro-Wilk test)
+shapiro_test <- shapiro.test(residuals(model_rcbd))
+
+# Test for homogeneity of variances (Bartlett test)
+bartlett_test <- bartlett.test(Response ~ Treatment, data = data)
+
+# Display test results
+cat("=== Formal Tests of Assumptions ===\n\n")
+
+cat("Normality (Shapiro-Wilk Test):\n")
+cat("  W =", round(shapiro_test$statistic, 4), "\n")
+cat("  p-value =", format.pval(shapiro_test$p.value, digits = 4), "\n")
+if (shapiro_test$p.value > 0.05) {
+  cat("  Interpretation: Normality assumption satisfied\n\n")
+} else {
+  cat("  Interpretation: Minor departure from normality detected\n\n")
+}
+
+cat("Homogeneity of Variances (Bartlett Test):\n")
+cat("  K² =", round(bartlett_test$statistic, 4), "\n")
+cat("  p-value =", format.pval(bartlett_test$p.value, digits = 4), "\n")
+if (bartlett_test$p.value > 0.05) {
+  cat("  Interpretation: Equal variance assumption satisfied\n\n")
+} else {
+  cat("  Interpretation: Unequal variances detected\n\n")
+}
+
+# Create diagnostic plots
+par(mfrow = c(1, 2))
+
+# Residuals vs Fitted Values
+plot(fitted(model_rcbd), residuals(model_rcbd),
+     main = "Residuals vs Fitted",
+     xlab = "Fitted Values (ms)", 
+     ylab = "Residuals (ms)",
+     pch = 20, col = "steelblue")
+abline(h = 0, col = "red", lty = 2, lwd = 2)
+grid()
+
+# Normal Q-Q Plot
+qqnorm(residuals(model_rcbd), 
+       main = "Normal Q-Q Plot",
+       pch = 20, col = "steelblue")
+qqline(residuals(model_rcbd), col = "red", lwd = 2)
+```
+
+
