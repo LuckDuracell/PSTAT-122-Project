@@ -25,3 +25,18 @@ write.csv(experiment_plan, "experiment_plan.csv", row.names = FALSE)
 data <- read.csv("experiment_plan_filled.csv")
 model <- aov(Reaction.Time..ms. ~ Treatment + Person, data = data)
 summary(model)
+
+# average reaction time based on phone
+databyphone <- data[data$Treatment == "Phone",]
+phone.data <- databyphone$Reaction.Time..ms.
+mean(phone.data, na.rm=TRUE)
+
+#average reaction time based on tablet
+databytablet <- data[data$Treatment == "Tablet",]
+tablet.data <- databytablet$Reaction.Time..ms.
+mean(tablet.data, na.rm=TRUE)
+
+#average reaction time based on laptop
+databylaptop <- data[data$Treatment == "Laptop",]
+laptop.data <- databylaptop$Reaction.Time..ms.
+mean(laptop.data, na.rm=TRUE)
