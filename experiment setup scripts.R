@@ -23,5 +23,5 @@ head(experiment_plan, 301)
 write.csv(experiment_plan, "experiment_plan.csv", row.names = FALSE)
 
 data <- read.csv("experiment_plan_filled.csv")
-
-
+model <- aov(Reaction.Time..ms. ~ Treatment + Person, data = data)
+summary(model)
