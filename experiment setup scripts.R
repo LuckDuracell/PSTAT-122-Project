@@ -40,3 +40,23 @@ mean(tablet.data, na.rm=TRUE)
 databylaptop <- data[data$Treatment == "Laptop",]
 laptop.data <- databylaptop$Reaction.Time..ms.
 mean(laptop.data, na.rm=TRUE)
+
+
+# basic stats on reaction time of phone (SD, min, max)
+min(phone.data, na.rm=TRUE)
+max(phone.data, na.rm=TRUE)
+sd(phone.data, na.rm=TRUE)
+
+# basic stats on reaction time of tablet (SD, min, max)
+min(tablet.data, na.rm=TRUE)
+max(tablet.data, na.rm=TRUE)
+sd(tablet.data, na.rm=TRUE)
+
+# basic stats on reaction time of laptop (SD, min, max)
+min(laptop.data, na.rm=TRUE)
+max(laptop.data, na.rm=TRUE)
+sd(laptop.data, na.rm=TRUE)
+
+
+
+
