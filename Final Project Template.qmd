@@ -69,9 +69,18 @@ Each person is a block, where they do 10 reaction tests for each treatment level
 # Data Collection
 
 -   **Procedure**: Describe how and when the experiment was conducted (e.g., location, date, steps taken).
-In order to collect a reasonable amount of participants, the experiment was conducted with volunteers primarily found at the UCSB Library, supplemented with one additional participant who performed the same procedure while remote. The procedure was conducted on Saturday, November 15th. 11 participants were recruited in total, each performing the experiment with their dominant hand on a standard laptop keyboard, smartphone, and tablet device. All display's were run at 60hz to prevent variability in reaction times due to refresh rates. Each participant was instructed to complete 10 trials on each device, with the order of devices randomized for each participant to mitigate order effects such as fatigue or practice.
+
+In order to collect a reasonable amount of participants, the experiment was conducted with volunteers primarily found at the UCSB Library, supplemented with one additional participant who performed the same procedure while remote. The procedure was conducted on Saturday, November 15th. 11 participants were recruited in total, each performing the experiment with their dominant hand on a standard laptop keyboard, smartphone, and tablet device, all through the Human Benchmark website [https://humanbenchmark.com/tests/reactiontime]. All display's were run at 60hz to prevent variability in reaction times due to refresh rates. 
+
+Each participant was instructed to complete 10 trials on each device, with the order of devices randomized for each participant to mitigate order effects such as fatigue or practice. No practice trials were given.
 -   **Challenges/Adjustments**: Mention any difficulties or changes made during data collection (e.g., technical issues, time adjustments).
-Due to time constraints, multiple devices were used to collect data, which may have introduced variability in reaction times due to differences in input latency, while minor. Additionally, one participant completed the experiment remotely, which could have introduced environmental variability. Lastly, due to the crowded nature of the UCSB Library, some participants may have been subject to distractions during the experiment.
+
+Due to time constraints, multiple devices were used to collect data, which may have introduced variability in reaction times due to differences in input latency, albeit minor. In this same regard, all display's were locked to 60hz to eliminate variability due to refresh rates.
+
+Additionally, one participant completed the experiment remotely, which could have introduced environmental variability. Given that the Human Benchmark is not internet-connection dependent, this effect is likely minimal. 
+
+Lastly, due to the crowded nature of the UCSB Library, some participants may have been subject to environmental distractions during the experiment.
+
 -   **Data Presentation**: Display the collected data in tables or graphs, summarizing key measures like mean and standard deviation.
 ```{r data-summary, echo=FALSE}
 knitr::opts_chunk$set(message = FALSE, warning = FALSE, error = FALSE, 
