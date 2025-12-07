@@ -109,8 +109,6 @@ as.data.frame(summary(aov(Response ~ Block + Treatment, data = data))[[1]]) %>% 
 
 # Analysis
 
--   **Exploratory Data**: Start with basic statistics (mean, SD) and visualizations (e.g., boxplots) to understand the data.
-
 ## Exploratory Data
 
 ### Basic Statistics
@@ -215,45 +213,6 @@ where:
 2.  **Normality:** Errors $\epsilon_{ij}$ are normally distributed
 3.  **Homoscedasticity:** Constant variance across treatment groups ($\sigma^2$)
 4.  **Additivity:** Block and treatment effects are additive (no interaction)
-
-### Preliminary Visualization of Treatment Effects
-
-```{r visualizations, fig.height=4, fig.width=8}
-par(mfrow = c(1, 2))
-
-# Boxplot by treatment
-par(mar = c(4, 4, 3, 1))
-boxplot(Response ~ Treatment, data = data,
-        main = "Reaction Time by Device Type",
-        xlab = "Input Device", 
-        ylab = "Reaction Time (ms)",
-        col = c("#FF9999", "#99CCFF", "#99FF99"),
-        border = c("#CC0000", "#0066CC", "#00CC00"),
-        names = c("Phone", "Tablet", "Laptop"))
-grid()
-
-# Interaction plot (blocking effects)
-par(mar = c(6, 4, 3, 6), xpd = TRUE)
-interaction.plot(data$Block, data$Treatment, data$Response,
-                 xlab = "",
-                 ylab = "Mean Reaction Time (ms)",
-                 trace.label = "",
-                 col = c("#CC0000", "#0066CC", "#00CC00"),
-                 lwd = 2,
-                 main = "Block × Treatment Interaction",
-                 cex.axis = 0.65,
-                 las = 2,
-                 xaxt = "n",
-                 legend = FALSE)
-block_labels <- levels(data$Block)
-axis(1, at = 1:length(block_labels), labels = block_labels, las = 2, cex.axis = 0.65)
-mtext("Person (Block)", side = 1, line = 4.5)
-legend("topright", inset = c(-0.25, 0), legend = c("Laptop", "Tablet", "Phone"),
-       col = c("#00CC00", "#0066CC", "#CC0000"), lty = 1, lwd = 2, 
-       bty = "n", cex = 0.9)
-```
-
-**Figure 1** displays two key visualizations. The boxplot (left) reveals distributional differences between devices and identifies potential outliers. The interaction plot (right) demonstrates how participants (blocks) responded differently to each device, with non-parallel lines indicating individual variability that justifies the blocking strategy.
 
 ### ANOVA Computation and Results
 
