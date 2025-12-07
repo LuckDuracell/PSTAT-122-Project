@@ -111,6 +111,66 @@ as.data.frame(summary(aov(Response ~ Block + Treatment, data = data))[[1]]) %>% 
 
 -   **Exploratory Data**: Start with basic statistics (mean, SD) and visualizations (e.g., boxplots) to understand the data.
 
+## Exploratory Data
+
+### Basic Statistics
+
+To understand the data collected, we will place the basic statistics of the data into a table (see Table 1). From the table, we can see the minimum, maximum, average, and standard deviation reaction speed in milliseconds (ms) for each of our three factors (phone, tablet, laptop). When analyzing the averages of each treatment group, we see our averages range from 291.5545 to 341.6455 with the average of our first treatment group (phone) having an average of 291.9455, our second treatment group (tablet) having an average of 291.5545, and our third treatment group (laptop) having an average of 341.6455. From the three averages, we can see that our third treatment group (laptop) might have a notable statistical difference compared to the other two treatment groups (phone and tablet).
+
+```{r}
+basic_stats <- data.frame(
+  row.names = c("Min", "Max", "Mean", "SD"),
+  phone  = c(190, 485, 291.9455, 46.54106),
+  tablet = c(200, 687, 291.5545, 74.56277),
+  laptop = c(205, 638, 341.6455, 111.3415)
+)
+
+basic_stats
+```
+**Table 1** displays the basic statistics for each treatment group (phone, tablet, laptop) in order of minimum, maximum, mean/average, and standard deviation. The basic statistics are calculated in terms of reaction speed in milliseconds (ms). 
+
+### Preliminary Visualization of Treatment Effects
+
+We will create a box plot (see Figure 1 left) and interaction plot (see Figure 1 right) of the data to better understand the distribution of the variability between the treatment groups. By observing the box plot, we can see that the median of the laptop data is slightly higher than the medians of the phone and tablet data. This observation can imply that generally, there was a slower average reaction time for the laptop than the phone and tablet. We can also pull observations from the interquartile range (IQR). The IQR of the laptop box is significantly longer than the boxes of the phone and tablet data. From this observation, we can imply that the laptop data has greater variability compared to the data of the phone and tablet. Another observation we can make is from looking at the whiskers of the box plot. By looking at the bottom whisker of the three factors, we can see that the laptop data has the highest minimum non-outlier value out of the three factors. Similarly with the top whisker, we can see that the laptop data has the highest maximum non-outlier value out of the three factors. From this observation, we can deduce that the laptop factor has the slowest fastest reaction time and the slowest slowest reaction time out of all three factors. By this fact, we know that the entire box plot for the laptop data must be shifted upward compared to the phone and tablet box plots. We will now focus to the interaction plot. By looking at the vertical cluster at each participant's name on the x-axis, we see that for most of the participants (7 out of 11 participants) had the slowest reaction time on the laptop. While this does not directly prove anything statistically, it shows a trend within the data points for the participants and shows that there might be a general trend of slower reaction times associated with the laptop factor. 
+
+```{r visualizations, fig.height=4, fig.width=8}
+par(mfrow = c(1, 2))
+
+# Box plot by treatment
+par(mar = c(4, 4, 3, 1))
+boxplot(Response ~ Treatment, data = data,
+        main = "Reaction Time by Device Type",
+        xlab = "Input Device", 
+        ylab = "Reaction Time (ms)",
+        col = c("#FF9999", "#99CCFF", "#99FF99"),
+        border = c("#CC0000", "#0066CC", "#00CC00"),
+        names = c("Phone", "Tablet", "Laptop"))
+grid()
+
+# Interaction plot (blocking effects)
+par(mar = c(6, 4, 3, 6), xpd = TRUE)
+interaction.plot(data$Block, data$Treatment, data$Response,
+                 xlab = "",
+                 ylab = "Mean Reaction Time (ms)",
+                 trace.label = "",
+                 col = c("#CC0000", "#0066CC", "#00CC00"),
+                 lwd = 2,
+                 main = "Block × Treatment Interaction",
+                 cex.axis = 0.65,
+                 las = 2,
+                 xaxt = "n",
+                 legend = FALSE)
+block_labels <- levels(data$Block)
+axis(1, at = 1:length(block_labels), labels = block_labels, las = 2, cex.axis = 0.65)
+mtext("Person (Block)", side = 1, line = 4.5)
+legend("topright", inset = c(-0.25, 0), legend = c("Laptop", "Tablet", "Phone"),
+       col = c("#00CC00", "#0066CC", "#CC0000"), lty = 1, lwd = 2, 
+       bty = "n", cex = 0.9)
+```
+
+**Figure 1** displays two key visualizations. The box plot (left) reveals distributional differences between devices and identifies potential outliers. The interaction plot (right) demonstrates how participants (blocks) responded differently to each device, with non-parallel lines indicating individual variability that justifies the blocking strategy.
+
+
 ```{r hypothesis-test-setup, include=FALSE}
 # Fit RCBD model
 model_rcbd <- aov(Response ~ Block + Treatment, data = data)
