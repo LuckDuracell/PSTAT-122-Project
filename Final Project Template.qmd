@@ -349,6 +349,31 @@ cat("**Independence:** Ensured by randomized treatment order and blocking struct
 
 # Appendices
 
+### Code Snippet: Data Preparation for Data Collection Summarization
+
+```{r echo=TRUE, results='hide'}
+library(knitr)
+library(ggplot2)
+library(tidyverse)
+
+# Load and prepare data
+data <- read.csv("experiment_plan_filled.csv")
+colnames(data) <- c("Block", "Treatment", "Response")
+data$Block <- factor(data$Block)
+data$Treatment <- factor(data$Treatment, 
+                         levels = c("Phone", "Tablet", "Laptop"))
+
+data %>%
+  group_by(Treatment) %>%
+  summarise(
+    Mean = mean(Response),
+    SD = sd(Response),
+    N = n()
+  ) %>% kable(caption = "Summary Statistics by Treatment")
+as.data.frame(summary(aov(Response ~ Block + Treatment, data = data))[[1]]) %>% kable(caption = "ANOVA Table Summary")
+```
+
+
 ### Code Snippet: Data Preparation for RCBD Model Fitting
 
 ```{r echo=TRUE, results='hide'}
