@@ -61,7 +61,6 @@ knitr::opts_chunk$set(error =  FALSE)
 
 (You are encouraged to explore more resources for determining the sample size )
 
-
 Randomized Complete Block Design
 
 Each person is a block, where they do 10 reaction tests for each treatment level (iPad, iPhone, Macbook Trackpad). Each experimental unit is an individual single reaction speed test.
@@ -70,7 +69,7 @@ Each person is a block, where they do 10 reaction tests for each treatment level
 
 -   **Procedure**: Describe how and when the experiment was conducted (e.g., location, date, steps taken).
 
-In order to collect a reasonable amount of participants, the experiment was conducted with volunteers primarily found at the UCSB Library, supplemented with one additional participant who performed the same procedure while remote. The procedure was conducted on Saturday, November 15th. 11 participants were recruited in total, each performing the experiment with their dominant hand on a standard laptop keyboard, smartphone, and tablet device, all through the Human Benchmark website [https://humanbenchmark.com/tests/reactiontime]. All display's were run at 60hz to prevent variability in reaction times due to refresh rates. 
+In order to collect a reasonable amount of participants, the experiment was conducted with volunteers primarily found at the UCSB Library, supplemented with one additional participant who performed the same procedure while remote. The procedure was conducted on Saturday, November 15th. 11 participants were recruited in total, each performing the experiment with their dominant hand on a standard laptop keyboard, smartphone, and tablet device, all through the Human Benchmark website \[https://humanbenchmark.com/tests/reactiontime\]. All display's were run at 60hz to prevent variability in reaction times due to refresh rates.
 
 Each participant was instructed to complete 10 trials on each device, with the order of devices randomized for each participant to mitigate order effects such as fatigue or practice. No practice trials were given.
 
@@ -78,11 +77,12 @@ Each participant was instructed to complete 10 trials on each device, with the o
 
 Due to time constraints, multiple devices were used to collect data, which may have introduced variability in reaction times due to differences in input latency, albeit minor. In this same regard, all display's were locked to 60hz to eliminate variability due to refresh rates.
 
-Additionally, one participant completed the experiment remotely, which could have introduced environmental variability. Given that the Human Benchmark is not internet-connection dependent, this effect is likely minimal. 
+Additionally, one participant completed the experiment remotely, which could have introduced environmental variability. Given that the Human Benchmark is not internet-connection dependent, this effect is likely minimal.
 
 Lastly, due to the crowded nature of the UCSB Library, some participants may have been subject to environmental distractions during the experiment.
 
 -   **Data Presentation**: Display the collected data in tables or graphs, summarizing key measures like mean and standard deviation.
+
 ```{r data-summary, echo=FALSE}
 knitr::opts_chunk$set(message = FALSE, warning = FALSE, error = FALSE, 
                       fig.width = 7, fig.height = 4, echo = FALSE)
@@ -107,7 +107,6 @@ data %>%
 as.data.frame(summary(aov(Response ~ Block + Treatment, data = data))[[1]]) %>% kable(caption = "ANOVA Table Summary")
 ```
 
-
 # Analysis
 
 -   **Exploratory Data**: Start with basic statistics (mean, SD) and visualizations (e.g., boxplots) to understand the data.
@@ -128,13 +127,14 @@ basic_stats <- data.frame(
 
 basic_stats
 ```
-**Table 1** displays the basic statistics for each treatment group (phone, tablet, laptop) in order of minimum, maximum, mean/average, and standard deviation. The basic statistics are calculated in terms of reaction speed in milliseconds (ms). 
+
+**Table 1** displays the basic statistics for each treatment group (phone, tablet, laptop) in order of minimum, maximum, mean/average, and standard deviation. The basic statistics are calculated in terms of reaction speed in milliseconds (ms).
 
 ### Preliminary Visualization of Treatment Effects
 
-We will create a box plot (see Figure 1 left) and interaction plot (see Figure 1 right) of the data to better understand the distribution of the variability between the treatment groups. By observing the box plot, we can see that the median of the laptop data is slightly higher than the medians of the phone and tablet data. This observation can imply that generally, there was a slower average reaction time for the laptop than the phone and tablet. We can also pull observations from the interquartile range (IQR). The IQR of the laptop box is significantly longer than the boxes of the phone and tablet data. From this observation, we can imply that the laptop data has greater variability compared to the data of the phone and tablet. Another observation we can make is from looking at the whiskers of the box plot. By looking at the bottom whisker of the three factors, we can see that the laptop data has the highest minimum non-outlier value out of the three factors. Similarly with the top whisker, we can see that the laptop data has the highest maximum non-outlier value out of the three factors. From this observation, we can deduce that the laptop factor has the slowest fastest reaction time and the slowest slowest reaction time out of all three factors. By this fact, we know that the entire box plot for the laptop data must be shifted upward compared to the phone and tablet box plots. We will now focus to the interaction plot. By looking at the vertical cluster at each participant's name on the x-axis, we see that for most of the participants (7 out of 11 participants) had the slowest reaction time on the laptop. While this does not directly prove anything statistically, it shows a trend within the data points for the participants and shows that there might be a general trend of slower reaction times associated with the laptop factor. 
+We will create a box plot (see Figure 1 left) and interaction plot (see Figure 1 right) of the data to better understand the distribution of the variability between the treatment groups. By observing the box plot, we can see that the median of the laptop data is slightly higher than the medians of the phone and tablet data. This observation can imply that generally, there was a slower average reaction time for the laptop than the phone and tablet. We can also pull observations from the interquartile range (IQR). The IQR of the laptop box is significantly longer than the boxes of the phone and tablet data. From this observation, we can imply that the laptop data has greater variability compared to the data of the phone and tablet. Another observation we can make is from looking at the whiskers of the box plot. By looking at the bottom whisker of the three factors, we can see that the laptop data has the highest minimum non-outlier value out of the three factors. Similarly with the top whisker, we can see that the laptop data has the highest maximum non-outlier value out of the three factors. From this observation, we can deduce that the laptop factor has the slowest fastest reaction time and the slowest slowest reaction time out of all three factors. By this fact, we know that the entire box plot for the laptop data must be shifted upward compared to the phone and tablet box plots. We will now focus to the interaction plot. By looking at the vertical cluster at each participant's name on the x-axis, we see that for most of the participants (7 out of 11 participants) had the slowest reaction time on the laptop. While this does not directly prove anything statistically, it shows a trend within the data points for the participants and shows that there might be a general trend of slower reaction times associated with the laptop factor.
 
-```{r visualizations, fig.height=4, fig.width=8}
+```{r visualization, fig.height=4, fig.width=8}
 par(mfrow = c(1, 2))
 
 # Box plot by treatment
@@ -170,7 +170,6 @@ legend("topright", inset = c(-0.25, 0), legend = c("Laptop", "Tablet", "Phone"),
 ```
 
 **Figure 1** displays two key visualizations. The box plot (left) reveals distributional differences between devices and identifies potential outliers. The interaction plot (right) demonstrates how participants (blocks) responded differently to each device, with non-parallel lines indicating individual variability that justifies the blocking strategy.
-
 
 ```{r hypothesis-test-setup, include=FALSE}
 # Fit RCBD model
@@ -324,7 +323,7 @@ kable(pairwise_table_rounded,
       caption = "Tukey HSD Post-Hoc Comparisons")
 ```
 
-**Interpretation:** Table 2 presents pairwise comparisons of mean reaction times between devices. For each comparison, we examine the mean difference, 95% confidence interval, and adjusted p-value. We reject $H_0: \mu_i = \mu_j$ if the adjusted p-value $\alpha$ < 0.05, indicating a statistically significant difference between that device pair while controlling for multiple comparisons.
+**Interpretation:** Table 2 presents pairwise comparisons of mean reaction times between devices. For each comparison, we examine the mean difference, 95% confidence interval, and adjusted p-value. We reject $H_0: \mu_i = \mu_j$ if the adjusted p-value $\alpha$ \< 0.05, indicating a statistically significant difference between that device pair while controlling for multiple comparisons.
 
 ```{r posthoc-interpretation, results='asis'}
 pairwise_table <- as.data.frame(tukey_result$Treatment)
@@ -395,14 +394,23 @@ cat("**Independence:** Ensured by randomized treatment order and blocking struct
 
 ### Hypothesis Test Results
 
-**Summary:** Testing whether input device type affects mean reaction time using RCBD ANOVA, we obtained F(`r anova_table[[1]]["Treatment", "Df"]`, `r anova_table[[1]]["Residuals", "Df"]`) = `r round(f_stat, 3)`, p `r format.pval(p_value, digits = 3, eps = 0.001)`. We `r if(p_value < alpha) "**reject H₀**" else "**fail to reject H₀**"` at $\alpha$ = 0.05. `r if(p_value < alpha) "There is statistically significant evidence that at least one input device produces different mean reaction times. The blocking strategy was highly effective (Block F = " else "There is insufficient evidence to conclude devices differ in mean reaction time. Blocking was effective (Block F = "``r round(anova_table[[1]]["Block", "F value"], 2)`, p < 0.001), reducing error and increasing statistical power. Tukey's HSD identified `r sum(as.data.frame(tukey_result$Treatment)[,"p adj"] < 0.05)` of 3 pairwise comparisons as significant. Model diagnostics confirm ANOVA assumptions are `r if(shapiro_test$p.value > 0.05 & bartlett_test$p.value > 0.05) "well-satisfied" else "reasonably satisfied"`.
-
-
+**Summary:** Testing whether input device type affects mean reaction time using RCBD ANOVA, we obtained F(`r anova_table[[1]]["Treatment", "Df"]`, `r anova_table[[1]]["Residuals", "Df"]`) = `r round(f_stat, 3)`, p `r format.pval(p_value, digits = 3, eps = 0.001)`. We `r if(p_value < alpha) "**reject H₀**" else "**fail to reject H₀**"` at $\alpha$ = 0.05. ``` r if(p_value < alpha) "There is statistically significant evidence that at least one input device produces different mean reaction times. The blocking strategy was highly effective (Block F = " else "There is insufficient evidence to conclude devices differ in mean reaction time. Blocking was effective (Block F = "``r round(anova_table[[1]]["Block", "F value"], 2) ```, p \< 0.001), reducing error and increasing statistical power. Tukey's HSD identified `r sum(as.data.frame(tukey_result$Treatment)[,"p adj"] < 0.05)` of 3 pairwise comparisons as significant. Model diagnostics confirm ANOVA assumptions are `r if(shapiro_test$p.value > 0.05 & bartlett_test$p.value > 0.05) "well-satisfied" else "reasonably satisfied"`.
 
 # Conclusions
 
--   Summarize key findings.
--   Comment on limitations and possible improvements.
+### **Summary of Key Findings**
+
+The purpose of this experiment was to determine whether the type of input device (Phone, Tablet, or Laptop) affects reaction time, after accounting for individual participant differences through a **Randomized Complete Block Design (RCBD)**. Each participant served as a block and completed 10 reaction-time trials on each device (30 observations per block). **The blocking proved essential** as the ANOVA results indicated highly significant block effects and substantial variability in the baseline reaction speeds across individuals. By controlling for this variability, the RCBD design we implemented allowed for reduced error variance and increased sensitivity of the treatment comparison.
+
+Through **the exploratory data,** we observed that the Laptop generally produced slower reaction times than the phone or tablet. This trend was reflected in the summary statistics and visual representations (boxplot and interaction plot), where the Laptop group showed a noticeably higher average reaction time and greater spread in responses compared to the Phone and Tablet groups.
+
+The hypothesis test indicated that mean reaction times **differ significantly across devices**. The treatment effect in the RCBD ANOVA was statistically significant at the $\alpha = 0.05$ level, meaning that the observed differences in average reaction times are unlikely to be due to chance alone. The device used has a statistically significant impact on reaction time performance. **Post-Hoc Tukey comparisons** revealed that the Laptop had the slowest reaction times, followed by Tablet, and then Phone (fastest), with Laptop being significantly slower than both Tablet and Phone.
+
+Through diagnostic checks, the **ANOVA assumptions** were reasonably satisfied. Although we saw minor deviations from normality and unequal variances across device types, the F-test conclusions are considered reliable as our experiment employed randomization, used a balanced design, and blocking was effective; ANOVA is generally robust. As the diagnostic plots and post-hoc Tukey comparisons point to the same directional effect, the inference that device type has an impact on reaction time remains well-supported.
+
+### **Limitations and Possible Improvements**
+
+Despite seeing statistically significant results, several limitations should be considered when interpreting the findings. The ANOVA assumptions were not perfectly met (the Bartlett's test showed unequal variances, Shapiro-Wilk's test showed deviation from normality), suggesting caution when interpreting effect sizes. However, with a total sample size of 330 observations and a randomized complete block design, the ANOVA is statistically robust. Participants completed the trials in the UCSB Library, leading to potential distractions from the public environment. Multiple devices were used for data collection, which may have introduced small differences in screen responsiveness or input latency. One participant completed the experiment remotely, potentially introducing variation in environmental conditions and device usage. Although these effects were likely minor, possible improvements include using the same device models across all individuals and using a controlled testing environment.
 
 # References
 
@@ -433,7 +441,6 @@ data %>%
   ) %>% kable(caption = "Summary Statistics by Treatment")
 as.data.frame(summary(aov(Response ~ Block + Treatment, data = data))[[1]]) %>% kable(caption = "ANOVA Table Summary")
 ```
-
 
 ### Code Snippet: Data Preparation for RCBD Model Fitting
 
@@ -544,5 +551,3 @@ qqnorm(residuals(model_rcbd),
        pch = 20, col = "steelblue")
 qqline(residuals(model_rcbd), col = "red", lwd = 2)
 ```
-
-
