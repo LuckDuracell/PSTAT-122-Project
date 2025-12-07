@@ -61,25 +61,24 @@ knitr::opts_chunk$set(error =  FALSE)
 
 (You are encouraged to explore more resources for determining the sample size )
 
-# Data Collection
-
--   **Procedure**: Describe how and when the experiment was conducted (e.g., location, date, steps taken).
--   **Challenges/Adjustments**: Mention any difficulties or changes made during data collection (e.g., technical issues, time adjustments).
--   **Data Presentation**: Display the collected data in tables or graphs, summarizing key measures like mean and standard deviation..
 
 Randomized Complete Block Design
 
-Each person is a block, where they do 5 reaction tests for each treatment level (iPad, iPhone, Macbook Trackpad). Each experimental unit is an individual single reaction speed test.
+Each person is a block, where they do 10 reaction tests for each treatment level (iPad, iPhone, Macbook Trackpad). Each experimental unit is an individual single reaction speed test.
 
-# Analysis
+# Data Collection
 
--   **Exploratory Data**: Start with basic statistics (mean, SD) and visualizations (e.g., boxplots) to understand the data.
-
-```{r hypothesis-test-setup, include=FALSE}
+-   **Procedure**: Describe how and when the experiment was conducted (e.g., location, date, steps taken).
+In order to collect a reasonable amount of participants, the experiment was conducted with volunteers primarily found at the UCSB Library, supplemented with one additional participant who performed the same procedure while remote. The procedure was conducted on Saturday, November 15th. 11 participants were recruited in total, each performing the experiment with their dominant hand on a standard laptop keyboard, smartphone, and tablet device. All display's were run at 60hz to prevent variability in reaction times due to refresh rates. Each participant was instructed to complete 10 trials on each device, with the order of devices randomized for each participant to mitigate order effects such as fatigue or practice.
+-   **Challenges/Adjustments**: Mention any difficulties or changes made during data collection (e.g., technical issues, time adjustments).
+Due to time constraints, multiple devices were used to collect data, which may have introduced variability in reaction times due to differences in input latency, while minor. Additionally, one participant completed the experiment remotely, which could have introduced environmental variability. Lastly, due to the crowded nature of the UCSB Library, some participants may have been subject to distractions during the experiment.
+-   **Data Presentation**: Display the collected data in tables or graphs, summarizing key measures like mean and standard deviation.
+```{r data-summary, echo=FALSE}
 knitr::opts_chunk$set(message = FALSE, warning = FALSE, error = FALSE, 
                       fig.width = 7, fig.height = 4, echo = FALSE)
 library(knitr)
 library(ggplot2)
+library(tidyverse)
 
 # Load and prepare data
 data <- read.csv("experiment_plan_filled.csv")
@@ -88,6 +87,22 @@ data$Block <- factor(data$Block)
 data$Treatment <- factor(data$Treatment, 
                          levels = c("Phone", "Tablet", "Laptop"))
 
+data %>%
+  group_by(Treatment) %>%
+  summarise(
+    Mean = mean(Response),
+    SD = sd(Response),
+    N = n()
+  ) %>% kable(caption = "Summary Statistics by Treatment")
+as.data.frame(summary(aov(Response ~ Block + Treatment, data = data))[[1]]) %>% kable(caption = "ANOVA Table Summary")
+```
+
+
+# Analysis
+
+-   **Exploratory Data**: Start with basic statistics (mean, SD) and visualizations (e.g., boxplots) to understand the data.
+
+```{r hypothesis-test-setup, include=FALSE}
 # Fit RCBD model
 model_rcbd <- aov(Response ~ Block + Treatment, data = data)
 anova_table <- summary(model_rcbd)
