@@ -112,9 +112,9 @@ To understand the data collected, we will place the basic statistics of the data
 ```{r}
 basic_stats <- data.frame(
   row.names = c("Min", "Max", "Mean", "SD"),
-  phone  = c(190, 485, 291.9455, 46.54106),
-  tablet = c(200, 687, 291.5545, 74.56277),
-  laptop = c(205, 638, 341.6455, 111.3415)
+  Phone  = c(190, 485, 291.9455, 46.54106),
+  Tablet = c(200, 687, 291.5545, 74.56277),
+  Laptop = c(205, 638, 341.6455, 111.3415)
 )
 
 basic_stats %>% kable(caption = "Basic Statistics by Treatment Group")
@@ -409,33 +409,17 @@ data %>%
 as.data.frame(summary(aov(Response ~ Block + Treatment, data = data))[[1]]) %>% kable(caption = "ANOVA Table Summary")
 ```
 
-### Code Snippet: Data Preparation for RCBD Model Fitting
+### Code Snippet: Intiail Statistics
 
 ```{r echo=TRUE, results='hide'}
-# Load required libraries
-library(knitr)
-library(ggplot2)
+basic_stats <- data.frame(
+  row.names = c("Min", "Max", "Mean", "SD"),
+  Phone  = c(190, 485, 291.9455, 46.54106),
+  Tablet = c(200, 687, 291.5545, 74.56277),
+  Laptop = c(205, 638, 341.6455, 111.3415)
+)
 
-# Load and prepare data
-data <- read.csv("experiment_plan_filled.csv")
-colnames(data) <- c("Block", "Treatment", "Response")
-data$Block <- factor(data$Block)
-data$Treatment <- factor(data$Treatment, 
-                         levels = c("Phone", "Tablet", "Laptop"))
-
-# Fit Randomized Complete Block Design (RCBD) ANOVA model
-model_rcbd <- aov(Response ~ Block + Treatment, data = data)
-
-# Extract ANOVA table and key statistics
-anova_table <- summary(model_rcbd)
-f_stat <- anova_table[[1]]["Treatment", "F value"]
-p_value <- anova_table[[1]]["Treatment", "Pr(>F)"]
-alpha <- 0.05
-
-# Display ANOVA results
-print(anova_table)
-cat("\nF-statistic for Treatment:", round(f_stat, 4), "\n")
-cat("P-value:", format.pval(p_value, digits = 4), "\n")
+basic_stats %>% kable(caption = "Basic Statistics by Treatment Group")
 ```
 
 ### Code Snippet: Tukey's HSD Post-Hoc Test
@@ -480,25 +464,18 @@ shapiro_test <- shapiro.test(residuals(model_rcbd))
 bartlett_test <- bartlett.test(Response ~ Treatment, data = data)
 
 # Display test results
-cat("=== Formal Tests of Assumptions ===\n\n")
-
-cat("Normality (Shapiro-Wilk Test):\n")
-cat("  W =", round(shapiro_test$statistic, 4), "\n")
-cat("  p-value =", format.pval(shapiro_test$p.value, digits = 4), "\n")
-if (shapiro_test$p.value > 0.05) {
-  cat("  Interpretation: Normality assumption satisfied\n\n")
-} else {
-  cat("  Interpretation: Minor departure from normality detected\n\n")
-}
-
-cat("Homogeneity of Variances (Bartlett Test):\n")
-cat("  K² =", round(bartlett_test$statistic, 4), "\n")
-cat("  p-value =", format.pval(bartlett_test$p.value, digits = 4), "\n")
-if (bartlett_test$p.value > 0.05) {
-  cat("  Interpretation: Equal variance assumption satisfied\n\n")
-} else {
-  cat("  Interpretation: Unequal variances detected\n\n")
-}
+data.frame(
+  Assumption = c(paste0("Normality (Shapiro-Wilk): W = ", round(shapiro_test$statistic, 4)), paste0("Equal Variances (Bartlett): K² = ", round(bartlett_test$statistic, 4)), "Independence"),
+  Statistic  = c(round(shapiro_test$statistic,4),
+                 round(bartlett_test$statistic,4),
+                 ""),
+  P_value    = c(format.pval(shapiro_test$p.value, 3),
+                 format.pval(bartlett_test$p.value, 3),
+                 ""),
+  Decision   = c(ifelse(shapiro_test$p.value>0.05,"Pass","Check"),
+                 ifelse(bartlett_test$p.value>0.05,"Pass","Fail"),
+                 "Ensured by randomized treatment order and blocking structure.")
+) %>% kable(caption = "Formal Test of Assumptions")
 
 # Create diagnostic plots
 par(mfrow = c(1, 2))
