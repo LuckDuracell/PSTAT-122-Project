@@ -57,7 +57,7 @@ Firstly, we identify that we will be blocking by input device. Block 1: Phone, B
 
 To achieve homogenous treatments, all 11 participants will do their trials on each of the 3 devices. The order of devices used for each participant, the treatment, is randomized. The order in which treatments are assigned to participants is random. Each participant performing a trial will have their reaction time recorded in milliseconds in an excel spreadsheet. 
 
-We identify that in this experiment, we have two fixed factor variables: input devices (which has 3 levels: phone, laptop, tablet) and 10 fixed trials per device per participant, and a random factor variable: participants. The total number of trials is given by blocks x experimental units x repetitions; in this case we have 3 blocks, 11 experimental units and 10 repetitions
+We identify that in this experiment, we have two fixed factor variables: input devices (which has 3 levels: phone, laptop, tablet) and 10 fixed trials per device per participant, and a random factor variable: participants. The total number of trials is given by blocks x experimental units x repetitions; in this case we have 3 blocks, 11 experimental units and 10 repetitions.
 
 # Data Collection
 
