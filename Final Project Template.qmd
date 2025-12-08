@@ -117,7 +117,7 @@ basic_stats <- data.frame(
   laptop = c(205, 638, 341.6455, 111.3415)
 )
 
-basic_stats
+basic_stats %>% kable(caption = "Basic Statistics by Treatment Group")
 ```
 
 **Table 1** displays the basic statistics for each treatment group (phone, tablet, laptop) in order of minimum, maximum, mean/average, and standard deviation. The basic statistics are calculated in terms of reaction speed in milliseconds (ms).
@@ -223,13 +223,14 @@ The F-statistic for testing treatment effects is calculated as: $$F = \frac{\tex
 where $t = 3$ treatments (devices), $b = 10$ blocks (participants), and degrees of freedom are $df_{\text{Treatment}} = 2$ and $df_{\text{Error}} = 18$.
 
 ```{r anova-output}
-print(anova_table)
+as.data.frame(anova_table[[1]]) %>% kable(caption = "ANOVA Table for RCBD Model")
 
-cat("\n=== Critical Test Statistics ===\n")
-cat("F-statistic for Treatment:", round(f_stat, 4), "\n")
-cat("P-value:", format.pval(p_value, digits = 4), "\n")
-cat("Degrees of Freedom: Treatment df =", anova_table[[1]]["Treatment", "Df"], 
-    ", Error df =", anova_table[[1]]["Residuals", "Df"], "\n")
+data.frame(
+  F_statistic_Treatment = round(f_stat, 4),
+  P_value = format.pval(p_value, digits = 4),
+  Treatment_df = anova_table[[1]]["Treatment", "Df"],
+  Error_df = anova_table[[1]]["Residuals", "Df"]
+) %>% kable(caption = "Critical Test Statistics")
 ```
 
 **ANOVA Table Interpretation:** The block F-statistic (F = `r round(anova_table[[1]]["Block", "F value"], 2)`, p \< 0.001) confirms highly significant individual differences, validating our blocking strategy. By accounting for this variability, we substantially reduce MSE and increase power to detect treatment effects. The treatment F-statistic (F = `r round(f_stat, 4)`) tests our primary hypothesis of whether device type affects reaction time. Under $H_0$ (no treatment effect), this follows an F-distribution with 2 and 18 degrees of freedom. The MSE = `r round(anova_table[[1]]["Residuals", "Mean Sq"], 2)` represents pooled within-group variability after removing block and treatment effects, serving as our estimate of $\sigma^2$.
@@ -323,24 +324,37 @@ qqline(residuals(model_rcbd), col = "red", lwd = 2)
 shapiro_test <- shapiro.test(residuals(model_rcbd))
 bartlett_test <- bartlett.test(Response ~ Treatment, data = data)
 
-cat("\n=== Formal Tests of Assumptions ===\n\n")
-cat("**Normality (Shapiro-Wilk):** W =", round(shapiro_test$statistic, 4), 
-    ", p =", format.pval(shapiro_test$p.value, digits = 3))
-if (shapiro_test$p.value > 0.05) {
-  cat(" → Normality satisfied\n\n")
-} else {
-  cat(" → Minor departure from normality (ANOVA is robust)\n\n")
-}
+# cat("\n=== Formal Tests of Assumptions ===\n\n")
+# cat("**Normality (Shapiro-Wilk):** W =", round(shapiro_test$statistic, 4),
+#     ", p =", format.pval(shapiro_test$p.value, digits = 3))
+# if (shapiro_test$p.value > 0.05) {
+#   cat(" → Normality satisfied\n\n")
+# } else {
+#   cat(" → Minor departure from normality (ANOVA is robust)\n\n")
+# }
+# 
+# cat("**Equal Variances (Bartlett):** K² =", round(bartlett_test$statistic, 4),
+#     ", p =", format.pval(bartlett_test$p.value, digits = 3))
+# if (bartlett_test$p.value > 0.05) {
+#   cat(" → Homoscedasticity satisfied\n\n")
+# } else {
+#   cat(" → Unequal variances detected\n\n")
+# }
+# 
+# cat("**Independence:** Ensured by randomized treatment order and blocking structure.\n")
 
-cat("**Equal Variances (Bartlett):** K² =", round(bartlett_test$statistic, 4),
-    ", p =", format.pval(bartlett_test$p.value, digits = 3))
-if (bartlett_test$p.value > 0.05) {
-  cat(" → Homoscedasticity satisfied\n\n")
-} else {
-  cat(" → Unequal variances detected\n\n")
-}
-
-cat("**Independence:** Ensured by randomized treatment order and blocking structure.\n")
+data.frame(
+  Assumption = c(paste0("Normality (Shapiro-Wilk): W = ", round(shapiro_test$statistic, 4)), paste0("Equal Variances (Bartlett): K² = ", round(bartlett_test$statistic, 4)), "Independence"),
+  Statistic  = c(round(shapiro_test$statistic,4),
+                 round(bartlett_test$statistic,4),
+                 ""),
+  P_value    = c(format.pval(shapiro_test$p.value, 3),
+                 format.pval(bartlett_test$p.value, 3),
+                 ""),
+  Decision   = c(ifelse(shapiro_test$p.value>0.05,"Pass","Check"),
+                 ifelse(bartlett_test$p.value>0.05,"Pass","Fail"),
+                 "Ensured by randomized treatment order and blocking structure.")
+) %>% kable(caption = "Formal Test of Assumptions")
 ```
 
 **Assessment Summary:** Based on diagnostic plots and formal tests, the ANOVA assumptions appear `r if(shapiro_test$p.value > 0.05 & bartlett_test$p.value > 0.05) "well-satisfied" else if(shapiro_test$p.value > 0.01 & bartlett_test$p.value > 0.01) "reasonably satisfied" else "potentially violated"`. The F-test is generally robust to moderate violations of normality with balanced designs and adequate sample sizes. Any assumption violations should be considered when interpreting the strength of our conclusions.
@@ -367,7 +381,7 @@ Despite seeing statistically significant results, several limitations should be 
 
 # References
 
-(If needed.)
+References were not needed for this project.
 
 # Appendices
 
