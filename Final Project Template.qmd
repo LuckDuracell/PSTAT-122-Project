@@ -36,7 +36,7 @@ knitr::opts_chunk$set(error =  FALSE)
 -   Anna Gornyitzki (annagornyitzki)
 -   Joyce Yue Shu (joyceyue)
 -   Aayushi Avabrath (aayushiavabrath)
--   STUDENT 5 (NetID 5)
+-   Karina Yousuf (kyousuf)
 :::
 
 ::: callout-caution
@@ -47,23 +47,17 @@ knitr::opts_chunk$set(error =  FALSE)
 
 # Introduction
 
--   Clear statement of the objective or research question.
--   Brief context or motivation.
+In this experiment, our group asks the question of whether or not an input device has a significant effect on the reaction time of users. Our null hypothesis, or the baseline assumption we make, is that the input device one uses has no effect on their mean reaction time. Our alternative hypothesis, what we are testing, is that there is some significant difference in mean reaction times between input devices. The intent of our experiment aims at identifying if, on average, the population of people on devices can react quicker on their phone, their laptop, or their laptop. 
 
 # Experimental Design
 
--   Description of factors and treatment structure.
--   Clearly state what you are measuring and the units. Examples: Number of words recalled (count), reaction time (seconds), taste rating (1–5 scale).
--   Identify which factors are fixed vs. random.
--   Description of design type (CRD, RCBD, factorial, etc.).
--   Explain how randomization, replication, and (if used) blocking were implemented.
--   Sample size: Provide number of observations per condition. Guideline: 5–10 per treatment for CRD, 3–5 blocks for RCBD, total feasible within 1 hour.
+The design we will use to test this hypothesis is a Random Component Block Design (RCBD). 
 
-(You are encouraged to explore more resources for determining the sample size )
+Firstly, we identify that we will be blocking by input device. Block 1: Phone, Block 2: Tablet, Block 3: Laptop. We choose 11 participants as our experimental units. We implement the repetition of each trial 10 times within each block before moving on to the next block. 
 
-Randomized Complete Block Design
+To achieve homogenous treatments, all 11 participants will do their trials on each of the 3 devices. The order of devices used for each participant, the treatment, is randomized. The order in which treatments are assigned to participants is random. Each participant performing a trial will have their reaction time recorded in milliseconds in an excel spreadsheet. 
 
-Each person is a block, where they do 10 reaction tests for each treatment level (iPad, iPhone, Macbook Trackpad). Each experimental unit is an individual single reaction speed test.
+We identify that in this experiment, we have two fixed factor variables: input devices (which has 3 levels: phone, laptop, tablet) and 10 fixed trials per device per participant, and a random factor variable: participants. The total number of trials is given by blocks x experimental units x repetitions; in this case we have 3 blocks, 11 experimental units and 10 repetitions
 
 # Data Collection
 
