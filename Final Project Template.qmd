@@ -381,7 +381,7 @@ Despite seeing statistically significant results, several limitations should be 
 
 # References
 
-References were not needed for this project.
+Human Benchmark. (n.d.). Reaction Time Test. https://humanbenchmark.com/tests/reactiontime
 
 # Appendices
 
